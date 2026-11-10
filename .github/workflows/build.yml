@@ -36,6 +36,12 @@ jobs:
           echo "No zip found, using repo files as they are."
         fi
 
+    # Newer Flutter: ThemeData.cardTheme needs CardThemeData
+    - name: Fix CardTheme for new Flutter
+      run: |
+        sed -i 's/cardTheme: CardTheme(/cardTheme: CardThemeData(/g' lib/core/theme.dart
+        grep -n "cardTheme" lib/core/theme.dart
+
     - name: Remove broken android folder
       run: rm -rf android
 
