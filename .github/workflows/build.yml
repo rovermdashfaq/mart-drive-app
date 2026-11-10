@@ -49,6 +49,29 @@ jobs:
         echo "---- patched $F ----"
         grep -n -i "desugar" "$F"
 
+    # NEW: force all plugins to compile against SDK 36
+    - name: Force compileSdk 36 for all plugins
+      run: |
+        R=android/build.gradle.kts
+        if [ -f "$R" ]; then
+          cat > /tmp/sdkfix.kts << 'EOP'
+        subprojects {
+            plugins.withId("com.android.library") {
+                extensions.configure<com.android.build.gradle.LibraryExtension> {
+                    compileSdk = 36
+                }
+            }
+        }
+
+        EOP
+          cat /tmp/sdkfix.kts "$R" > /tmp/root.kts
+          mv /tmp/root.kts "$R"
+        else
+          R=android/build.gradle
+          printf '\nsubprojects {\n    afterEvaluate { p ->\n        if (p.hasProperty("android")) { p.android.compileSdkVersion 36 }\n    }\n}\n' >> "$R"
+        fi
+        head -15 "$R"
+
     - name: Setup Google Services
       run: |
         cat << 'EOG' > android/app/google-services.json
