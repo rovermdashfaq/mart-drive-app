@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ANDROID_USER_HOME: /home/runner/.android
 
     steps:
     - uses: actions/checkout@v4
@@ -173,7 +175,12 @@ jobs:
 
     - name: Print SHA-1 for Firebase
       run: |
-        keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android | grep -E "SHA1|SHA256"
+        SDK=${ANDROID_HOME:-/usr/local/lib/android/sdk}
+        APKSIGNER=$(ls $SDK/build-tools/*/apksigner | sort -V | tail -n 1)
+        echo "===== SHA-1 OF THIS APK ====="
+        $APKSIGNER verify --print-certs build/app/outputs/flutter-apk/app-release.apk | grep -i "SHA-1\|SHA-256" || true
+        echo "===== keystore files ====="
+        find / -name "debug.keystore" 2>/dev/null || true
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
