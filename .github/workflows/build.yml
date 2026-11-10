@@ -23,20 +23,16 @@ jobs:
       with:
         channel: 'stable'
 
-    # ১. আপনার আপলোড করা অসম্পূর্ণ android ফোল্ডারটি সরিয়ে ফেলা হচ্ছে
     - name: Remove broken android folder
       run: rm -rf android
 
-    # ২. ফ্লাটার নিজে থেকে একটি নতুন এবং সঠিক android ফোল্ডার তৈরি করবে
     - name: Create android folder
       run: flutter create --platforms=android --project-name mart_drive .
       
-    # ৩. এন্ড্রয়েড ম্যানিফেস্টে কিছু পারমিশন যোগ করা হচ্ছে (যা ফ্লাটার নিজে থেকে করে না)
     - name: Update Android Manifest
       run: |
         sed -i 's/<application/<uses-permission android:name="android.permission.CAMERA"\/>\n    <uses-permission android:name="android.permission.USE_BIOMETRIC"\/>\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"\/>\n    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"\/>\n    <application/' android/app/src/main/AndroidManifest.xml
 
-    # ৪. ফায়ারবেস কনফিগারেশন ফাইল তৈরি করা
     - name: Setup Google Services
       run: |
         cat << 'EOF' > android/app/google-services.json
@@ -58,6 +54,11 @@ jobs:
           "configuration_version": "1"
         }
         EOF
+
+    # এই নতুন স্টেপটি যোগ করা হয়েছে
+    - name: Fix ProGuard Issue
+      run: |
+        echo "android.enableR8.fullMode=false" >> android/gradle.properties
 
     - name: Get dependencies
       run: flutter pub get
