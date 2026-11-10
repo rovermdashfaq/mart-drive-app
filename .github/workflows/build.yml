@@ -24,6 +24,18 @@ jobs:
         channel: 'stable'
         cache: false
 
+    # Unpack the full app source from a zip uploaded to the repo root
+    - name: Unpack app source zip
+      run: |
+        Z=$(ls *.zip *.ZIP 2>/dev/null | head -n 1)
+        if [ -n "$Z" ]; then
+          echo "Unpacking $Z"
+          unzip -o "$Z" "lib/*" "pubspec.yaml" -d .
+          find lib -name "*.dart" | wc -l
+        else
+          echo "No zip found, using repo files as they are."
+        fi
+
     - name: Remove broken android folder
       run: rm -rf android
 
