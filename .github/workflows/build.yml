@@ -22,7 +22,43 @@ jobs:
       uses: subosito/flutter-action@v2
       with:
         channel: 'stable'
-        
+
+    # ১. আপনার আপলোড করা অসম্পূর্ণ android ফোল্ডারটি সরিয়ে ফেলা হচ্ছে
+    - name: Remove broken android folder
+      run: rm -rf android
+
+    # ২. ফ্লাটার নিজে থেকে একটি নতুন এবং সঠিক android ফোল্ডার তৈরি করবে
+    - name: Create android folder
+      run: flutter create --platforms=android --project-name mart_drive .
+      
+    # ৩. এন্ড্রয়েড ম্যানিফেস্টে কিছু পারমিশন যোগ করা হচ্ছে (যা ফ্লাটার নিজে থেকে করে না)
+    - name: Update Android Manifest
+      run: |
+        sed -i 's/<application/<uses-permission android:name="android.permission.CAMERA"\/>\n    <uses-permission android:name="android.permission.USE_BIOMETRIC"\/>\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"\/>\n    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"\/>\n    <application/' android/app/src/main/AndroidManifest.xml
+
+    # ৪. ফায়ারবেস কনফিগারেশন ফাইল তৈরি করা
+    - name: Setup Google Services
+      run: |
+        cat << 'EOF' > android/app/google-services.json
+        {
+          "project_info": {
+            "project_number": "829348083361",
+            "project_id": "mart-drive",
+            "storage_bucket": "mart-drive.firebasestorage.app"
+          },
+          "client": [
+            {
+              "client_info": {
+                "mobilesdk_app_id": "1:829348083361:android:7f6d8b6c8c7e2f6a",
+                "android_client_info": { "package_name": "com.example.mart_drive" }
+              },
+              "api_key": [ { "current_key": "AIzaSyDUcT6hVqLHy3pYzwg1oktI7amTpF9Qj4c" } ]
+            }
+          ],
+          "configuration_version": "1"
+        }
+        EOF
+
     - name: Get dependencies
       run: flutter pub get
       
