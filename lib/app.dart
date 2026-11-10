@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'all_files_screen.dart';
 
 final _router = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const AllFilesScreen(),
+      builder: (context, state) => const Scaffold(
+        body: Center(
+          child: Text('MART Drive App is Working!', style: TextStyle(fontSize: 20)),
+        ),
+      ),
     ),
   ],
 );
