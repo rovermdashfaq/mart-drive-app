@@ -48,6 +48,15 @@ jobs:
         sed -i '/^  assets:/,$d' pubspec.yaml
         sed -n '/^flutter:/,$p' pubspec.yaml
 
+    # Use the real Firebase Android app (com.mart.drive) and web client id for Google Sign-In
+    - name: Patch Firebase options and Google Sign-In
+      run: |
+        sed -i "/static const FirebaseOptions android/,/);/ s/apiKey: '[^']*'/apiKey: 'AIzaSyBjtYjThH1_e4CR5nHAgEpM9bkC-umus2w'/" lib/firebase_options.dart
+        sed -i "/static const FirebaseOptions android/,/);/ s/appId: '[^']*'/appId: '1:829348083361:android:8f65cbef816e10cd53e2e0'/" lib/firebase_options.dart
+        sed -i "0,/scopes: \[/s//serverClientId: '829348083361-5q4raoou5ia32tf0dc8ak6086hhbushv.apps.googleusercontent.com',\n      scopes: [/" lib/services/auth_service.dart
+        sed -n '/static const FirebaseOptions android/,/);/p' lib/firebase_options.dart
+        sed -n 10,20p lib/services/auth_service.dart
+
     - name: Remove broken android folder
       run: rm -rf android
 
@@ -107,10 +116,32 @@ jobs:
           "client": [
             {
               "client_info": {
-                "mobilesdk_app_id": "1:829348083361:android:e1a90c0ef34b12c8a9d53e",
-                "android_client_info": { "package_name": "com.mart.drive" }
+                "mobilesdk_app_id": "1:829348083361:android:8f65cbef816e10cd53e2e0",
+                "android_client_info": {
+                  "package_name": "com.mart.drive"
+                }
               },
-              "api_key": [ { "current_key": "AIzaSyDUcT6hVqLHy3pYzwg1oktI7amTpF9Qj4c" } ]
+              "oauth_client": [
+                {
+                  "client_id": "829348083361-5q4raoou5ia32tf0dc8ak6086hhbushv.apps.googleusercontent.com",
+                  "client_type": 3
+                }
+              ],
+              "api_key": [
+                {
+                  "current_key": "AIzaSyBjtYjThH1_e4CR5nHAgEpM9bkC-umus2w"
+                }
+              ],
+              "services": {
+                "appinvite_service": {
+                  "other_platform_oauth_client": [
+                    {
+                      "client_id": "829348083361-5q4raoou5ia32tf0dc8ak6086hhbushv.apps.googleusercontent.com",
+                      "client_type": 3
+                    }
+                  ]
+                }
+              }
             }
           ],
           "configuration_version": "1"
