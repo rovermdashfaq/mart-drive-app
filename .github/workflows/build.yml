@@ -22,6 +22,7 @@ jobs:
       uses: subosito/flutter-action@v2
       with:
         channel: 'stable'
+        cache: false # ফ্লাটার ক্যাশ বন্ধ করা হলো যাতে নতুন ফাইল ডাউনলোড হয়
 
     - name: Remove broken android folder
       run: rm -rf android
@@ -55,14 +56,20 @@ jobs:
         }
         EOF
 
-    # এই নতুন স্টেপটি যোগ করা হয়েছে
-    - name: Fix ProGuard Issue
-      run: |
-        echo "android.enableR8.fullMode=false" >> android/gradle.properties
-
     - name: Get dependencies
       run: flutter pub get
-      
+
+    # নতুন যোগ করা স্টেপ: ক্যাশে থাকা লাইব্রেরির ভেতরের পুরনো কোড পরিবর্তন করা হবে
+    - name: Patch InAppWebView Gradle File
+      run: |
+        GRADLE_FILE=$(find /home/runner/.pub-cache -path "*flutter_inappwebview_android*/android/build.gradle" | head -n 1)
+        if [ -n "$GRADLE_FILE" ]; then
+          sed -i "s/proguard-android.txt/proguard-android-optimize.txt/g" "$GRADLE_FILE"
+          echo "Patched: $GRADLE_FILE"
+        else
+          echo "Gradle file not found, skipping."
+        fi
+
     - name: Build APK
       run: flutter build apk --release
       
