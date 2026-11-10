@@ -42,6 +42,12 @@ jobs:
         sed -i 's/cardTheme: CardTheme(/cardTheme: CardThemeData(/g' lib/core/theme.dart
         grep -n "cardTheme" lib/core/theme.dart
 
+    # Asset/font files are not in the zip: remove them from pubspec (app falls back to the default font)
+    - name: Remove missing assets and fonts from pubspec
+      run: |
+        sed -i '/^  assets:/,$d' pubspec.yaml
+        sed -n '/^flutter:/,$p' pubspec.yaml
+
     - name: Remove broken android folder
       run: rm -rf android
 
