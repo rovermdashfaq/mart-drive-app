@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "829348083361",
+    "project_id": "mart-drive",
+    "storage_bucket": "mart-drive.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:829348083361:android:7f6d8b6c8c7e2f6a",
+        "android_client_info": {
+          "package_name": "com.example.mart_drive"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUcT6hVqLHy3pYzwg1oktI7amTpF9Qj4c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
